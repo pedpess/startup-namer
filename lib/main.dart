@@ -1,35 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Welcome to Flutter',
-      home: new RandomWords(),
+      home: RandomWords(),
     );
   }
 }
 
-
 class RandomWords extends StatefulWidget {
   @override
-  createState() => new RandomWordsState();
+  createState() => RandomWordsState();
 }
 
 class RandomWordsState extends State<RandomWords> {
-
-  final _suggestions = <WordPair>[];
+  final List<WordPair> _suggestions = <WordPair>[];
+  final Set<WordPair> _saved = Set<WordPair>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   Widget _buildSuggestions() {
-    return new ListView.builder(
+    return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
-          if (i.isOdd) return new Divider();
+          if (i.isOdd) return Divider();
 
           final index = i ~/ 2;
 
@@ -37,24 +35,29 @@ class RandomWordsState extends State<RandomWords> {
             _suggestions.addAll(generateWordPairs().take(10));
           }
           return _buildRow(_suggestions[index]);
-        }
-    );
+        });
   }
 
   Widget _buildRow(WordPair pair) {
-    return new ListTile(
-      title: new Text(
+    final bool isAlreadySaved = _saved.contains(pair);
+
+    return ListTile(
+      title: Text(
         pair.asPascalCase,
         style: _biggerFont,
+      ),
+      trailing: Icon(
+        isAlreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: isAlreadySaved ? Colors.red : null,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Startup Name Generator'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Startup Name Generator'),
       ),
       body: _buildSuggestions(),
     );
